@@ -6,10 +6,9 @@ This document analyzes the Virtual File System of FreeBSD and Linux. It examines
 
 ## FreeBSD vnode locking
 ### vnode structure
-A vnode in FreeBSD is an internal data structure used to represent an active file, directory, device node or sockets. It is represented by the ***struct vnode*** and is uniquely allocated for each active filesystem entitiy. The vnode structure is defined in the ***sys/sys/vnode.h*** header file.
+A vnode in FreeBSD is an internal data structure used to represent an active file, directory, device node or sockets. It is represented by the ***struct vnode*** and is uniquely allocated for each active filesystem entitiy. The vnode structure is defined in the ***sys/sys/vnode.h*** header file and contains a lot of entries so the following strcuture will only contain entries relevant to the discussion.
 
 ```text
-This structure only contains the relevant entries
 struct vnode {
     const struct vop_vector *v_op;
     void *v_data;
@@ -33,3 +32,28 @@ The vnode lock is referenced through the **v_vnlock** field of ***struct vnode**
 
 Vnode locks are typically acquired using int **vn_lock**(***struct vnode *vp, int flags***) where ***vp*** is the vnode being locked and ***flags*** specifies the lock type. This function is defined in ***sys/kern/vfs_vnops.c***.
 Before invoking filesystem operations such as lookup, create, read, write, etc the VFS layer typically acquires the vnode lock through vn_lock(). The lock is released after the operation completes.
+
+## Linux inode locking
+### inode structure
+The Linux VFS represents filesystem metadata using ***struct inode***, defined in ***include/linux/fs.h***. The full structure contains many fields and configuration-dependent members. The following structure only contains fields relevant to VFS operations and locking:
+```text
+struct inode {
+    umode_t i_mode;
+    kuid_t i_uid;
+    kgid_t i_gid;
+    loff_t i_size;
+    const struct inode_operations *i_op;
+    const struct file_operations *i_fop;
+    struct rw_semaphore i_rwsem;
+    atomic_t i_count;
+};
+```
+Here **i_mode** is the file types and permissions, **i_uid** and **i_gid** is the file ownership, **i_size** is the size of the file and so on.
+unlike FreeBSD's vnode the Linux inode directly stores file metadata such as ownership, permissions, timestamps, and file size. In FreeBSD, these metadata fields are typically stored in structures referenced through the vnode's v_data pointer.
+
+### inode locking mechanism
+
+
+
+
+
