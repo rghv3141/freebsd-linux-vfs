@@ -31,8 +31,5 @@ vnode locking in FreeBSD is used to serialize access to filesystem objects repre
 
 The vnode lock is referenced through the **v_vnlock** field of ***struct vnode***.
 
-Vnode locks are typically acquired using:
-int **vn_lock**(***struct vnode *vp, int flags***)
-where ***vp*** is the vnode being locked and ***flags*** specifies the lock type. This function is defined in ***sys/kern/vfs_vnops.c***.
-
+Vnode locks are typically acquired using int **vn_lock**(***struct vnode *vp, int flags***) where ***vp*** is the vnode being locked and ***flags*** specifies the lock type. This function is defined in ***sys/kern/vfs_vnops.c***.
 Before invoking filesystem operations such as lookup, create, read, write, etc the VFS layer typically acquires the vnode lock through vn_lock(). The lock is released after the operation completes.
