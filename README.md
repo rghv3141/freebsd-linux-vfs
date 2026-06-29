@@ -67,6 +67,17 @@ inode_lock() acquires the inode's i_rwsem in exclusive mode, while inode_lock_sh
 
 Unlike FreeBSD, which performs synchronization through the vnode (v_vnlock), Linux centers its VFS synchronization around the inode because the inode directly stores the file's metadata. This design allows concurrent read access while ensuring exclusive access for operations that modify the inode or directory contents.
 
+## Comparison: FreeBSD vnode vs Linux inode
+
+| Feature | FreeBSD Vnode | Linux Inode |
+|---------|---------------|-------------|
+| Locking mechanism | Uses `v_vnlock`, typically acquired through `vn_lock()`. | Uses `i_rwsem`, typically acquired through `inode_lock()`. |
+| Filesystem abstraction | Provides a filesystem-independent interface for all supported filesystems. | Uses `struct inode` together with `struct dentry` to represent filesystem objects. |
+| Operation dispatch | Uses the vnode operation vector (`v_op`) and the VOP interface. | Uses `inode_operations` (`i_op`) and `file_operations` (`i_fop`). |
+| Metadata fields | Does not directly store file metadata such as file size, ownership, or timestamps. | Directly stores metadata such as `i_size`, `i_uid`, `i_gid`, and timestamps. |
+| Filesystem-specific data | Stores a pointer (`v_data`) to filesystem-specific objects such as a UFS inode, ZFS znode, or NFS node. | The inode itself is the filesystem-specific metadata object. |
+
+
 
 
 
