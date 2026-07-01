@@ -81,15 +81,15 @@ Unlike FreeBSD, which performs synchronization through the vnode (v_vnlock), Lin
 
 ## `open()`
 
-***open()*** is a libc fucntion used for opening or creating files. In this example, the pathname "/tmp/test.txt" identifies the file to be opened. The O_RDWR flag requests that the file be opened for both reading and writing, while the O_CREAT flag instructs the kernel to create the file if it does not already exist. The mode 0644 specifies the permissions assigned to the file if it is created.
+`open()` is a libc fucntion used for opening or creating files. In this example, the pathname "/tmp/test.txt" identifies the file to be opened. The ***O_RDWR*** flag requests that the file be opened for both reading and writing, while the ***O_CREAT*** flag instructs the kernel to create the file if it does not already exist. The mode 0644 specifies the permissions assigned to the file if it is created.
 
-When the call enters the FreeBSD kernel, control passes to the system call entry point sys_openat() in ***sys/kern/vfs_syscalls.c***, which begins the VFS pathname lookup and file opening process. If the operation completes successfully, open() returns a file descriptor that the process uses for subsequent operations such as read(), write(), and close().
+When the call enters the FreeBSD kernel, control passes to the system call entry point sys_openat() in `sys/kern/vfs_syscalls.c`, which begins the VFS pathname lookup and file opening process. If the operation completes successfully, `open()` returns a file descriptor that the process uses for subsequent operations such as read(), write(), and close().
 
 ## `sys_openat()`
 
-Control enters the FreeBSD kernel through the ***sys_openat()*** system call entry point, which is implemented in ***sys/kern/vfs_syscalls.c***. Although the user invokes ***open()***, FreeBSD implements file opening through ***sys_openat()***, with ***open()*** using the current working directory as the starting point for pathname resolution.
+Control enters the FreeBSD kernel through the `sys_openat()` system call entry point, which is implemented in `sys/kern/vfs_syscalls.c`. Although the user invokes `open()`, FreeBSD implements file opening through `sys_openat()`, with `open()` using the current working directory as the starting point for pathname resolution.
 
-The ***sys_openat()*** function validates the system call arguments and forwards the request to `kern_openat()`, which performs the kernel-level processing required to open or create the file. This includes pathname resolution, permission checking, vnode lookup, and file creation if the `O_CREAT` flag is specified.
+The `sys_openat()` function validates the system call arguments and forwards the request to `kern_openat()`, which performs the kernel-level processing required to open or create the file. This includes pathname resolution, permission checking, vnode lookup, and file creation if the ***O_CREAT*** flag is specified.
 
 ## `kern_openat()`
 
