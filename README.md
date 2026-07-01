@@ -57,13 +57,13 @@ Linux synchronizes access to filesystem objects using the inode's i_rwsem field,
 
 The VFS acquires and releases the inode lock using helper functions such as:
 
-inode_lock(struct inode *inode);
-inode_unlock(struct inode *inode);
+`inode_lock(struct inode *inode);`
+`inode_unlock(struct inode *inode);`
 
-inode_lock_shared(struct inode *inode);
-inode_unlock_shared(struct inode *inode);
+`inode_lock_shared(struct inode *inode);`
+`inode_unlock_shared(struct inode *inode);`
 
-inode_lock() acquires the inode's i_rwsem in exclusive mode, while inode_lock_shared() acquires it in shared mode. These functions are commonly used before performing operations such as file creation, deletion, rename, or metadata updates to ensure that only one thread modifies the inode at a time.
+`inode_lock()` acquires the inode's ***i_rwsem*** in exclusive mode, while `inode_lock_shared()` acquires it in shared mode. These functions are commonly used before performing operations such as file creation, deletion, rename, or metadata updates to ensure that only one thread modifies the inode at a time.
 
 Unlike FreeBSD, which performs synchronization through the vnode (v_vnlock), Linux centers its VFS synchronization around the inode because the inode directly stores the file's metadata. This design allows concurrent read access while ensuring exclusive access for operations that modify the inode or directory contents.
 
